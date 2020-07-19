@@ -1,17 +1,15 @@
 import 'dart:convert';
 
+import 'package:flutterNotes/dtos/register_user_dto.dart';
 import 'package:flutterNotes/http/exceptions/http_exception.dart';
-import 'package:flutterNotes/http/interceptors/logging_interceptor.dart';
 import 'package:flutterNotes/http/webclient.dart';
 import 'package:http/http.dart';
-import 'package:http_interceptor/http_interceptor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserWebClient {
   static final Map<int, String> _statusCodeResponses = {
-    400: 'There was an error submitting transaction',
     401: 'Email or password incorrect',
-    409: 'Transaction already exists'
+    500: 'Server error',
   };
 
   Future<void> _saveToken(String token) async {
@@ -47,7 +45,22 @@ class UserWebClient {
 
     await _saveToken(jsonDecode(response.body)['data']['token']);
   }
-  
+
+  Future<void> register(RegisterUserDTO registerUserDTO) async {
+    final Response response = await post(
+      '$baseUrl/register',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: registerUserDTO.toJson()
+    );
+
+    print(response.statusCode);
+
+    if (response.statusCode != 201)
+      throw HttpException(_statusCodeResponses[response.statusCode]);
+  }
+
   Future<void> logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('logged', false);
