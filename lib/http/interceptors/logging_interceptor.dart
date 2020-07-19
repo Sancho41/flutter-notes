@@ -1,21 +1,18 @@
-import 'package:http_interceptor/http_interceptor.dart';
+import 'package:dio/dio.dart';
 
-class LoggingInterceptor implements InterceptorContract {
-  @override
-  Future<RequestData> interceptRequest({RequestData data}) async {
+class LoggingInterceptor{
+  static RequestOptions interceptRequest({RequestOptions options}) {
     print('Request');
-    print('url: ${data.url}');
-    print('headers: ${data.headers}');
-    print('body: ${data.body}');
-    return data;
+    print('url: ${options.uri}');
+    print('headers: ${options.headers}');
+    print('body: ${options.data}');
+    return options;
   }
 
-  @override
-  Future<ResponseData> interceptResponse({ResponseData data}) async {
+  static Response interceptResponse({Response options}) {
     print('Response');
-    print('url: ${data.url}');
-    print('headers: ${data.headers}');
-    print('body: ${data.body}');
-    return data;
+    print('headers: ${options.headers}');
+    print('body: ${options.data}');
+    return options;
   }
 }
