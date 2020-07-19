@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterNotes/routes.dart';
+import 'package:flutterNotes/screens/home.dart';
 
 void main() {
   runApp(EscreveAi());
@@ -13,6 +14,7 @@ class EscreveAi extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData.dark(),
       routes: routes,
+      initialRoute: Home.routeName,
     );
   }
 }
