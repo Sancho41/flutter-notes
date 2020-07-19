@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 class LoggingInterceptor{
   static RequestOptions interceptRequest({RequestOptions options}) {
-    print('Request');
-    print('url: ${options.uri}');
-    print('headers: ${options.headers}');
-    print('body: ${options.data}');
+    debugPrint('Request');
+    debugPrint('url: ${options.uri}');
+    debugPrint('headers: ${options.headers}');
+    debugPrint('body: ${options.data}');
     return options;
   }
 
   static Response interceptResponse({Response options}) {
-    print('Response');
-    print('headers: ${options.headers}');
-    print('body: ${options.data}');
+    debugPrint('Response');
+    debugPrint('headers: ${options.headers}');
+    debugPrint('body: ${options.data}');
     return options;
   }
 }
