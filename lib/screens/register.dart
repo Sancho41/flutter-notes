@@ -72,6 +72,7 @@ class _RegisterState extends State<Register> {
             enabled: !this._loading,
             actionSubmit: true,
             isPassword: true,
+            onSubmited: (_) => this._attemptRegister(context),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
