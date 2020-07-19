@@ -8,6 +8,7 @@ class FormTextField extends StatelessWidget {
   final bool enabled;
   final bool actionSubmit;
   final TextEditingController controller;
+  final Function onSubmited;
 
   FormTextField({
     @required this.label,
@@ -16,6 +17,7 @@ class FormTextField extends StatelessWidget {
     this.enabled = true,
     this.actionSubmit = false,
     this.isPassword = false,
+    this.onSubmited,
   });
 
   @override
@@ -32,7 +34,8 @@ class FormTextField extends StatelessWidget {
         autocorrect: false,
         textInputAction:
             this.actionSubmit ? TextInputAction.done : TextInputAction.next,
-        onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+        onSubmitted:
+            this.onSubmited ?? (_) => FocusScope.of(context).nextFocus(),
         enabled: this.enabled,
         inputFormatters: [
           BlacklistingTextInputFormatter(RegExp("[\\t]")),
