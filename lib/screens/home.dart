@@ -1,23 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterNotes/screens/login.dart';
+import 'package:flutterNotes/layouts/layout_default.dart';
 
 class Home extends StatelessWidget {
   static final String routeName = '/';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-      ),
-      body: Column(
-        children: <Widget>[
-          RaisedButton(
-            child: Text('Login'),
-            onPressed: () => Navigator.pushNamed(context, Login.routeName),
-          )
-        ],
+    return LayoutDefault(
+      title: 'Home',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'EscreveAí',
+                style: TextStyle(
+                  fontSize: 30.0,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
