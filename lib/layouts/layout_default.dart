@@ -7,7 +7,11 @@ class LayoutDefault extends StatelessWidget {
   final String title;
   final bool lockRouteChange;
 
-  LayoutDefault({@required this.child, this.title, this.lockRouteChange = false});
+  LayoutDefault({
+    @required this.child,
+    this.title,
+    this.lockRouteChange = false,
+  });
 
   @override
   Widget build(BuildContext context) {
