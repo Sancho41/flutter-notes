@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthInterceptor {
-  static Future<RequestOptions> interceptRequest({RequestOptions options}) async {
-
+class AuthInterceptor extends Interceptor{
+  @override
+  Future<dynamic> onRequest(RequestOptions options) async {
     if (options.headers.containsKey('requiresToken')) {
       options.headers.remove('requiresToken');
 

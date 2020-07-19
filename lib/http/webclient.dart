@@ -13,14 +13,7 @@ Dio createDio() {
     baseUrl: baseUrl,
   ));
 
-  return dio
-    ..interceptors
-        .add(InterceptorsWrapper(onRequest: (RequestOptions options) async {
-      LoggingInterceptor.interceptRequest(options: options);
-      await AuthInterceptor.interceptRequest(options: options);
-      return options;
-    }, onResponse: (Response options) {
-      LoggingInterceptor.interceptResponse(options: options);
-      return options;
-    }));
+  dio.interceptors.add(LoggingInterceptor());
+  dio.interceptors.add(AuthInterceptor());
+  return dio;
 }
