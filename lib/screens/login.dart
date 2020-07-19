@@ -53,6 +53,7 @@ class _LoginState extends State<Login> {
             isPassword: true,
             actionSubmit: true,
             enabled: !this._loading,
+            onSubmited: (_) => this._attempLogin(context),
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
