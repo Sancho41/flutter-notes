@@ -1,10 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterNotes/components/response_dialog.dart';
-import 'package:flutterNotes/http/exceptions/http_exception.dart';
-import 'package:flutterNotes/http/webclients/user_webclient.dart';
+import 'package:flutterNotes/components/form_text_field.dart';
 import 'package:flutterNotes/layouts/layout_default.dart';
-import 'package:flutterNotes/screens/home.dart';
+import 'package:flutterNotes/services/user_service.dart';
 
 class Login extends StatefulWidget {
   static final String routeName = '/login';
@@ -18,45 +16,18 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _loginController = new TextEditingController();
   final TextEditingController _passwordController = new TextEditingController();
-  final UserWebClient _webClient = new UserWebClient();
+  final UserService _service = new UserService();
+
   bool _loading = false;
 
-  void _attemptLogin([_]) async {
-    String login = this._loginController.text;
-    String password = this._passwordController.text;
-
+  void _attempLogin(BuildContext context) async {
     setState(() => this._loading = true);
-
-    if (login.isEmpty || password.isEmpty) {
-      await showDialog(
-        context: context,
-        builder: (contextDialog) => FailureDialog('Preencha todos os campos!'),
-      );
-      setState(() => this._loading = false);
-      return;
-    }
-
-    try {
-      await this._webClient.login(login, password);
-      await showDialog(
-        context: context,
-        builder: (contextDialog) => SuccessDialog('Logado com sucesso!'),
-      );
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        Home.routeName,
-        (route) => true,
-      );
-    } on HttpException catch (error) {
-      await showDialog(
-        context: context,
-        builder: (contextDialog) => FailureDialog(error.message),
-      );
-    } catch (error) {
-      print(error.message);
-    } finally {
-      setState(() => this._loading = false);
-    }
+    await this._service.login(
+          context,
+          this._loginController.text,
+          this._passwordController.text,
+        );
+    setState(() => this._loading = false);
   }
 
   @override
@@ -66,33 +37,19 @@ class _LoginState extends State<Login> {
       title: 'Login',
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.assignment_ind),
-                labelText: 'Login',
-              ),
-              controller: this._loginController,
-              autocorrect: false,
-              textInputAction: TextInputAction.next,
-              onSubmitted: (_) => FocusScope.of(context).nextFocus(),
-              enabled: !this._loading,
-            ),
+          FormTextField(
+            label: 'Email',
+            controller: this._loginController,
+            icon: Icons.assignment_ind,
+            enabled: !this._loading,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              obscureText: true,
-              controller: this._passwordController,
-              decoration: InputDecoration(
-                prefixIcon: Icon(Icons.vpn_key),
-                labelText: 'Password',
-              ),
-              autocorrect: false,
-              onSubmitted: this._attemptLogin,
-              enabled: !this._loading,
-            ),
+          FormTextField(
+            label: 'Password',
+            controller: this._passwordController,
+            icon: Icons.vpn_key,
+            isPassword: true,
+            actionSubmit: true,
+            enabled: !this._loading,
           ),
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -100,7 +57,8 @@ class _LoginState extends State<Login> {
               width: double.infinity,
               child: RaisedButton(
                 child: Text(!this._loading ? 'Entrar' : 'Entrando...'),
-                onPressed: this._loading ? null : this._attemptLogin,
+                onPressed:
+                    this._loading ? null : () => this._attempLogin(context),
               ),
             ),
           )
