@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class UserWebClient {
   static final Map<int, String> _statusCodeResponses = {
     401: 'Email or password incorrect',
+    400: 'Password did not match',
     500: 'Server error',
   };
 
