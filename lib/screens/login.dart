@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterNotes/components/response_dialog.dart';
+import 'package:flutterNotes/http/exceptions/http_exception.dart';
+import 'package:flutterNotes/http/webclients/user_webclient.dart';
 import 'package:flutterNotes/layouts/layout_default.dart';
 
 class Login extends StatefulWidget {
@@ -15,15 +17,16 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _login = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
+  final UserWebClient _webClient = new UserWebClient();
   bool _loading = false;
 
   void _attemptLogin() async {
     String login = this._login.text;
     String password = this._password.text;
 
-    setState(() {
-      this._loading = true;
-    });
+//    setState(() {
+//      this._loading = true;
+//    });
 
     if (login.isEmpty || password.isEmpty) {
       await showDialog(
@@ -33,8 +36,24 @@ class _LoginState extends State<Login> {
       setState(() {
         this._loading = false;
       });
+      return;
     }
-  }
+
+    try {
+      await this._webClient.login(login, password);
+      await showDialog(
+        context: context,
+        builder: (contextDialog) => SuccessDialog('Logado com sucesso!'),
+      );
+    } on HttpException catch (error) {
+      await showDialog(
+        context: context,
+        builder: (contextDialog) => FailureDialog(error.message),
+      );
+    } catch (error) {
+      print(error.message);
+    }
+;  }
 
   @override
   Widget build(BuildContext context) {
