@@ -31,12 +31,7 @@ class UserWebClient {
   }
 
   Future<void> login(String email, String password) async {
-    Client client = HttpClientWithInterceptor.build(
-      interceptors: [LoggingInterceptor()],
-//      requestTimeout: Duration(seconds: 5),
-    );
-
-    final Response response = await client.post(
+    final Response response = await post(
       '$baseUrl/login',
       headers: {
         'Content-type': 'application/json',
