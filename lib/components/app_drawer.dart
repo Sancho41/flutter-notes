@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterNotes/http/webclients/user_webclient.dart';
+import 'package:flutterNotes/screens/home.dart';
 import 'package:flutterNotes/screens/login.dart';
 import 'package:flutterNotes/screens/register.dart';
 
@@ -44,13 +46,67 @@ class _DrawerItem extends StatelessWidget {
   }
 }
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   final bool lockRouteChange;
 
   AppDrawer({this.lockRouteChange = false});
 
   @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  final UserWebClient _webClient = new UserWebClient();
+
+  bool isLogged = false;
+
+  List<Widget> _loggetOutItems() => [
+        _DrawerItem(
+          route: Login.routeName,
+          name: Login.name,
+          icon: Login.icon,
+          lock: this.widget.lockRouteChange,
+        ),
+        _DrawerItem(
+          route: Register.routeName,
+          name: Register.name,
+          icon: Register.icon,
+          lock: this.widget.lockRouteChange,
+        )
+      ];
+
+  List<Widget> _loggetInItems() => [
+        _DrawerItem(
+          route: '/',
+          name: 'Home',
+          icon: Icons.home,
+          lock: this.widget.lockRouteChange,
+        ),
+        InkWell(
+          onTap: () async {
+            await this._webClient.logout();
+            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Login.routeName,
+              (route) => true,
+            );
+          },
+          child: ListTile(
+            leading: Icon(Icons.exit_to_app),
+            title: Text('Logout'),
+          ),
+        )
+      ];
+
+  @override
   Widget build(BuildContext context) {
+    this._webClient.isLogged().then((status) {
+      setState(() {
+        this.isLogged = status;
+      });
+    });
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -64,18 +120,7 @@ class AppDrawer extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).primaryColor),
             ),
           ),
-          _DrawerItem(
-            route: Login.routeName,
-            name: Login.name,
-            icon: Login.icon,
-            lock: this.lockRouteChange,
-          ),
-          _DrawerItem(
-            route: Register.routeName,
-            name: Register.name,
-            icon: Register.icon,
-            lock: this.lockRouteChange,
-          ),
+          ...(this.isLogged ? this._loggetInItems() : this._loggetOutItems())
         ],
       ),
     );

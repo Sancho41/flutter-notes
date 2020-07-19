@@ -17,6 +17,7 @@ class UserWebClient {
   Future<void> _saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
+    await prefs.setBool('logged', true);
   }
 
   Future<String> _getToken() async {
@@ -24,7 +25,12 @@ class UserWebClient {
     return prefs.getString('token');
   }
 
-  void login(String email, String password) async {
+  Future<bool> isLogged() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('logged') ?? false;
+  }
+
+  Future<void> login(String email, String password) async {
     Client client = HttpClientWithInterceptor.build(
       interceptors: [LoggingInterceptor()],
 //      requestTimeout: Duration(seconds: 5),
@@ -45,5 +51,11 @@ class UserWebClient {
       throw HttpException(_statusCodeResponses[response.statusCode]);
 
     await _saveToken(jsonDecode(response.body)['data']['token']);
+  }
+  
+  Future<void> logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('logged', false);
+    await prefs.remove('token');
   }
 }

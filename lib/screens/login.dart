@@ -4,6 +4,7 @@ import 'package:flutterNotes/components/response_dialog.dart';
 import 'package:flutterNotes/http/exceptions/http_exception.dart';
 import 'package:flutterNotes/http/webclients/user_webclient.dart';
 import 'package:flutterNotes/layouts/layout_default.dart';
+import 'package:flutterNotes/screens/home.dart';
 
 class Login extends StatefulWidget {
   static final String routeName = '/login';
@@ -15,27 +16,23 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final TextEditingController _login = new TextEditingController();
-  final TextEditingController _password = new TextEditingController();
+  final TextEditingController _loginController = new TextEditingController();
+  final TextEditingController _passwordController = new TextEditingController();
   final UserWebClient _webClient = new UserWebClient();
   bool _loading = false;
 
-  void _attemptLogin() async {
-    String login = this._login.text;
-    String password = this._password.text;
+  void _attemptLogin([_]) async {
+    String login = this._loginController.text;
+    String password = this._passwordController.text;
 
-//    setState(() {
-//      this._loading = true;
-//    });
+    setState(() => this._loading = true);
 
     if (login.isEmpty || password.isEmpty) {
       await showDialog(
         context: context,
         builder: (contextDialog) => FailureDialog('Preencha todos os campos!'),
       );
-      setState(() {
-        this._loading = false;
-      });
+      setState(() => this._loading = false);
       return;
     }
 
@@ -45,6 +42,11 @@ class _LoginState extends State<Login> {
         context: context,
         builder: (contextDialog) => SuccessDialog('Logado com sucesso!'),
       );
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        Home.routeName,
+        (route) => true,
+      );
     } on HttpException catch (error) {
       await showDialog(
         context: context,
@@ -52,8 +54,10 @@ class _LoginState extends State<Login> {
       );
     } catch (error) {
       print(error.message);
+    } finally {
+      setState(() => this._loading = false);
     }
-;  }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +73,7 @@ class _LoginState extends State<Login> {
                 prefixIcon: Icon(Icons.assignment_ind),
                 labelText: 'Login',
               ),
-              controller: this._login,
+              controller: this._loginController,
               autocorrect: false,
               textInputAction: TextInputAction.next,
               onSubmitted: (_) => FocusScope.of(context).nextFocus(),
@@ -80,13 +84,13 @@ class _LoginState extends State<Login> {
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               obscureText: true,
-              controller: this._password,
+              controller: this._passwordController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.vpn_key),
                 labelText: 'Password',
               ),
               autocorrect: false,
-              onSubmitted: (_) {},
+              onSubmitted: this._attemptLogin,
               enabled: !this._loading,
             ),
           ),
