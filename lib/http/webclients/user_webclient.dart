@@ -31,26 +31,27 @@ class UserWebClient {
 
   Future<void> login(LoginDTO loginDTO) async {
     Dio dio = createDio();
-    final Response response = await dio.post('/login', data: loginDTO.toJson());
 
-    if (response.statusCode != 200)
-      throw HttpException(_statusCodeResponses[response.statusCode]);
-
-    await _saveToken(response.data['data']['token']);
+    try {
+      final Response response =
+          await dio.post('/login', data: loginDTO.toJson());
+      await _saveToken(response.data['data']['token']);
+    } on DioError catch (e) {
+      throw HttpException(_statusCodeResponses[e.response.statusCode]);
+    }
   }
 
   Future<void> register(RegisterUserDTO registerUserDTO) async {
     Dio dio = createDio();
 
-    final Response response = await dio.post(
-      '/login',
-      data: registerUserDTO.toJson(),
-    );
-
-    print(response.statusCode);
-
-    if (response.statusCode != 201)
-      throw HttpException(_statusCodeResponses[response.statusCode]);
+    try {
+      await dio.post(
+        '/register',
+        data: registerUserDTO.toJson(),
+      );
+    } on DioError catch (e) {
+      throw HttpException(_statusCodeResponses[e.response.statusCode]);
+    }
   }
 
   Future<void> logout() async {
