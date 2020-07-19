@@ -2,20 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterNotes/screens/login.dart';
 import 'package:flutterNotes/screens/register.dart';
-import 'package:flutterNotes/screens/register.dart';
-import 'package:flutterNotes/screens/register.dart';
 
 class _DrawerItem extends StatelessWidget {
   final String name;
   final String route;
   final IconData icon;
   final bool replace;
+  final bool lock;
 
   _DrawerItem({
     @required this.route,
     this.name = '',
     this.icon,
     this.replace = false,
+    this.lock = false,
   });
 
   @override
@@ -29,7 +29,7 @@ class _DrawerItem extends StatelessWidget {
         });
 
         Navigator.pop(context);
-        if (!isSame) {
+        if (!isSame && !this.lock) {
           if (this.replace)
             Navigator.pushReplacementNamed(context, this.route);
           else
@@ -45,6 +45,10 @@ class _DrawerItem extends StatelessWidget {
 }
 
 class AppDrawer extends StatelessWidget {
+  final bool lockRouteChange;
+
+  AppDrawer({this.lockRouteChange = false});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -64,11 +68,13 @@ class AppDrawer extends StatelessWidget {
             route: Login.routeName,
             name: Login.name,
             icon: Login.icon,
+            lock: this.lockRouteChange,
           ),
           _DrawerItem(
             route: Register.routeName,
             name: Register.name,
             icon: Register.icon,
+            lock: this.lockRouteChange,
           ),
         ],
       ),

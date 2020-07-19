@@ -5,17 +5,21 @@ import 'package:flutterNotes/components/app_drawer.dart';
 class LayoutDefault extends StatelessWidget {
   final Widget child;
   final String title;
+  final bool lockRouteChange;
 
-  LayoutDefault({@required this.child, this.title});
+  LayoutDefault({@required this.child, this.title, this.lockRouteChange = false});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(this.title),
+    return WillPopScope(
+      onWillPop: () async => !this.lockRouteChange,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(this.title),
+        ),
+        drawer: AppDrawer(lockRouteChange: this.lockRouteChange),
+        body: this.child,
       ),
-      drawer: AppDrawer(),
-      body: this.child,
     );
   }
 }
