@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterNotes/components/response_dialog.dart';
+import 'package:flutterNotes/dtos/login_dto.dart';
 import 'package:flutterNotes/dtos/register_user_dto.dart';
 import 'package:flutterNotes/http/exceptions/http_exception.dart';
 import 'package:flutterNotes/http/webclients/user_webclient.dart';
@@ -9,12 +10,8 @@ import 'package:flutterNotes/screens/login.dart';
 class UserService {
   final UserWebClient _webClient = new UserWebClient();
 
-  Future<void> login(
-    BuildContext context,
-    String email,
-    String password,
-  ) async {
-    if (email.isEmpty || password.isEmpty) {
+  Future<void> login(BuildContext context, LoginDTO loginDTO) async {
+    if (loginDTO.hasEmptyFields()) {
       await showDialog(
         context: context,
         builder: (contextDialog) => FailureDialog('Fill all fields!'),
@@ -23,7 +20,7 @@ class UserService {
     }
 
     try {
-      await this._webClient.login(email, password);
+      await this._webClient.login(loginDTO);
       Navigator.pushNamedAndRemoveUntil(
         context,
         Home.routeName,

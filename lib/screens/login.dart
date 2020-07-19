@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterNotes/components/form_text_field.dart';
+import 'package:flutterNotes/dtos/login_dto.dart';
 import 'package:flutterNotes/layouts/layout_default.dart';
 import 'package:flutterNotes/services/user_service.dart';
 
@@ -24,8 +25,10 @@ class _LoginState extends State<Login> {
     setState(() => this._loading = true);
     await this._service.login(
           context,
-          this._loginController.text,
-          this._passwordController.text,
+          LoginDTO(
+            email: this._loginController.text,
+            password: this._passwordController.text,
+          ),
         );
     setState(() => this._loading = false);
   }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class RegisterUserDTO {
   final String email;
@@ -27,7 +27,7 @@ class RegisterUserDTO {
       'email': this.email,
       'name': this.name,
       'password': this.password,
-      'password_confirmation': this.password
+      'password_confirmation': this.passwordConfirmation
     });
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutterNotes/dtos/login_dto.dart';
 import 'package:flutterNotes/dtos/register_user_dto.dart';
 import 'package:flutterNotes/http/exceptions/http_exception.dart';
 import 'package:flutterNotes/http/webclient.dart';
@@ -28,16 +29,13 @@ class UserWebClient {
     return prefs.getBool('logged') ?? false;
   }
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(LoginDTO loginDTO) async {
     final Response response = await post(
       '$baseUrl/login',
       headers: {
         'Content-type': 'application/json',
       },
-      body: jsonEncode({
-        "email": email,
-        "password": password,
-      }),
+      body: loginDTO.toJson(),
     );
 
     if (response.statusCode != 200)
