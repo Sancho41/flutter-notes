@@ -13,7 +13,7 @@ Dio createDio() {
     baseUrl: baseUrl,
   ));
 
-  dio.interceptors.add(LoggingInterceptor());
   dio.interceptors.add(AuthInterceptor());
+  dio.interceptors.add(LoggingInterceptor());
   return dio;
 }
