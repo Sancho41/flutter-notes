@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutterNotes/dtos/login_dto.dart';
 import 'package:flutterNotes/dtos/register_user_dto.dart';
+import 'package:flutterNotes/exceptions/unauthenticated_exception.dart';
 import 'package:flutterNotes/http/exceptions/http_exception.dart';
 import 'package:flutterNotes/http/webclient.dart';
+import 'package:flutterNotes/models/user.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,29 +15,18 @@ class UserWebClient {
     500: 'Server error',
   };
 
-  Future<void> _saveToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
-    await prefs.setBool('logged', true);
-  }
-
-  Future<String> _getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
-  }
-
-  Future<bool> isLogged() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('logged') ?? false;
-  }
-
   Future<void> login(LoginDTO loginDTO) async {
     Dio dio = createDio();
 
     try {
       final Response response =
           await dio.post('/login', data: loginDTO.toJson());
-      await _saveToken(response.data['data']['token']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', response.data['data']['token']);
+
+      // Get user after authentication
+      await this.user();
+
     } on DioError catch (e) {
       throw HttpException(_statusCodeResponses[e.response.statusCode]);
     }
@@ -54,9 +45,26 @@ class UserWebClient {
     }
   }
 
-  Future<void> logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('logged', false);
-    await prefs.remove('token');
+  Options authOptions() {
+    return Options(headers: {'requirestoken': true});
+  }
+
+  // ignore: missing_return
+  Future<User> user() async {
+    Dio dio = createDio();
+
+    try {
+      Response response = await dio.get(
+        '/user',
+        options: authOptions(),
+      );
+
+      User user =  User.fromJson(response.data['data']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('user', user.toJson());
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401)
+        throw new UnauthenticatedException();
+    }
   }
 }
