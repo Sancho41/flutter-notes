@@ -1,15 +1,25 @@
+import 'dart:convert';
+
 class User {
-  int _id;
-  String _name;
-  String _email;
+  int id;
+  String name;
+  String email;
 
   User.fromJson(Map<String, dynamic> userJson)
-      : this._id = userJson['id'],
-        this._name = userJson['name'],
-        this._email = userJson['email'];
+      : this.id = userJson['id'],
+        this.name = userJson['name'],
+        this.email = userJson['email'];
+
+  String toJson() {
+    return jsonEncode({
+      'id': this.id,
+      'email': this.email,
+      'name': this.name,
+    });
+  }
 
   @override
   String toString() {
-    return 'User{_id: $_id, _name: $_name, _email: $_email}';
+    return 'User{id: $id, name: $name, email: $email}';
   }
 }
