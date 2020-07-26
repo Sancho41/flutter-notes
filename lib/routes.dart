@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutterNotes/screens/home.dart';
 import 'package:flutterNotes/screens/login.dart';
+import 'package:flutterNotes/screens/note/note_show.dart';
 import 'package:flutterNotes/screens/register.dart';
 
 Map<String, WidgetBuilder> routes = {
@@ -8,4 +9,6 @@ Map<String, WidgetBuilder> routes = {
 
   Register.routeName: (context) => Register(),
   Login.routeName: (context) => Login(),
+
+  NoteShow.routeName: (context) => NoteShow()
 };
